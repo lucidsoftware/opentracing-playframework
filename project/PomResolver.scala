@@ -1,7 +1,7 @@
 import sbt.BuildLoader.ResolveInfo
 import sbt._
 
-object Build extends sbt.Build {
+object PomResolver extends sbt.Build {
 
   override def buildLoaders = Seq(BuildLoader.resolve { resolveInfo =>
     if (resolveInfo.uri.getScheme == "pom") {
