@@ -13,6 +13,12 @@ object PlayCross extends AutoPlugin {
   override val projectSettings = Seq(
     unmanagedSourceDirectories in Compile += file(s"${sourceDirectory.value}-${playVersion.value}") / "main" / "scala",
     target := file(s"${target.value}-${playVersion.value}"),
-    version := s"${version.value}-${playVersion.value}"
+    version := {
+      if (version.value.endsWith("-SNAPSHOT")) {
+        s"${version.value.replace("-SNAPSHOT", "")}-${playVersion.value}-SNAPSHOT"
+      } else {
+        s"${version.value}-${playVersion.value}"
+      }
+    }
   )
 }
