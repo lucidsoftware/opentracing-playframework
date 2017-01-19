@@ -38,6 +38,9 @@ inScope(Global)(Seq(
   organization := "com.lucidchart",
   organizationHomepage := Some(url("http://opentracing.io/")),
   organizationName := "OpenTracing",
+  pgpPassphrase := Some(Array.emptyCharArray),
+  pgpPublicRing := file(System.getProperty("user.home")) / ".pgp" / "pubring",
+  pgpSecretRing := file(System.getProperty("user.home")) / ".pgp" / "secring",
   resolvers += Resolver.typesafeRepo("releases"),
   scalaVersion := "2.11.8",
   scmInfo := Some(ScmInfo(
