@@ -6,6 +6,10 @@ after_success:
         echo $PGP_SECRET | base64 --decode > ~/.pgp/secring
         sbt +publishSigned +sonatypeReleaseAll
     fi
+cache:
+  directories:
+    - $HOME/.ivy2
+    - $HOME/.sbt
 deploy:
   api_key: $GITHUB_AUTH
   file: "*/target*/**/*.jar"
