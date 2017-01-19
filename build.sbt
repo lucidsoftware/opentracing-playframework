@@ -5,7 +5,7 @@ lazy val `opentracing-globaltracer` = RootProject(
 )
 
 lazy val `opentracing-spanmanager` = RootProject(
-  new URI("pom", "io.opentracing.contrib:opentracing-globaltracer:0.0.1-SNAPSHOT:git://github.com/talsma-ict/java-activespan.git#8bba41c4", "")
+  new URI("pom", "io.opentracing.contrib:opentracing-spanmanager:0.0.1:git://github.com/opentracing-contrib/java-activespan.git#23885b8a", "")
 )
 
 def play = Project("play", file("play"))
