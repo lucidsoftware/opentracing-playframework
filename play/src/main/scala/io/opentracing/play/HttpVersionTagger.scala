@@ -10,6 +10,6 @@ class HttpVersionTagger extends SpanTagger {
   }
 }
 
-object HttpVersionTagger {
+object HttpVersionTagger extends HttpVersionTagger {
   val HttpVersionTag = "http.version"
 }

@@ -11,7 +11,7 @@ class ContentTagger extends SpanTagger {
   }
 }
 
-object ContentTagger {
+object ContentTagger extends ContentTagger {
   val contentLengthTag = "http.contentLength"
   val contentTypeTag = "http.contentType"
 }

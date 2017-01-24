@@ -11,3 +11,5 @@ class TagsSpanTagger extends SpanTagger {
     request.tags.foreach { case (key, value) => span.setTag(s"play.$key", value) }
   }
 }
+
+object TagsSpanTagger extends TagsSpanTagger

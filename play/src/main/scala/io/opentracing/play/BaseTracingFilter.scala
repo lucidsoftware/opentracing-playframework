@@ -12,7 +12,6 @@ abstract class BaseTracingFilter(name: String, taggers: Traversable[SpanTagger])
   protected[this] def spanBuilder(request: RequestHeader) = {
     val parent = tracer.extract(Format.Builtin.HTTP_HEADERS, new HeadersTextMap(request.headers))
     tracer.buildSpan(Routes.controllerName(request).getOrElse(name)).asChildOf(parent)
-
   }
 
   def apply(next: EssentialAction) = EssentialAction { request =>

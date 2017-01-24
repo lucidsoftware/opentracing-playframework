@@ -1,12 +1,10 @@
-enablePlugins(PlayCross)
-
 description := "Play Opentracing, using globaltracer and spanmanager"
 
-//libraryDependencies ++= Seq(
-//  "io.opentracing.contrib" % "opentracing-globaltracer" % "0.1.0-SNAPSHOT",
-//  "io.opentracing.contrib" % "opentracing-spanmanager" % "0.0.1-SNAPSHOT"
-//)
+libraryDependencies ++= Seq(
+  "io.opentracing.contrib" % "opentracing-globaltracer" % "0.0.1",
+  "io.opentracing.contrib" % "opentracing-spanmanager" % "0.0.1"
+)
 
 moduleName := "opentracing-play-active"
 
-resolvers += Resolver.mavenLocal
+resolvers += Resolver.bintrayRepo("opentracing", "maven")

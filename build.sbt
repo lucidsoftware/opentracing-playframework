@@ -1,46 +1,32 @@
-import sbt.Keys._
+import com.lucidchart.sbtcross.{CrossableProject, LibraryVersionAxis}
 
-lazy val `opentracing-globaltracer` = RootProject(
-  new URI("pom", "io.opentracing.contrib:opentracing-globaltracer:0.1.0-SNAPSHOT:git://github.com/opentracing-contrib/java-globaltracer.git#223ac98d", "")
-)
+val playAxis = new LibraryVersionAxis("play", SettingKey[String]("playVersion"), LibraryVersionAxis.minorVersion)
 
-lazy val `opentracing-spanmanager` = RootProject(
-  new URI("pom", "io.opentracing.contrib:opentracing-spanmanager:0.0.1:git://github.com/opentracing-contrib/java-activespan.git#23885b8a", "")
-)
-
-def play = Project("play", file("play"))
-
-lazy val `play_2.3` = play.copy(s"${play.id}_2_3").settings(
-  crossScalaVersions := Seq("2.10.6", "2.11.8"),
-  playVersion := "2.3"
-)
-
-lazy val `play_2.5` = play.copy(s"${play.id}_2_5").settings(
-  playVersion := "2.5"
-)
+def play = Project("play", file("play")).cross.cross(playAxis)
 
 def `play-active` = Project("play-active", file("play-active"))
-  .dependsOn(`opentracing-globaltracer`, `opentracing-spanmanager`)
+  .cross.cross(playAxis).dependsOn(CrossableProject.toDependency(play))
 
-lazy val `play-active_2.3` = `play-active`.copy(s"${`play-active`.id}_2_3").dependsOn(`play_2.3`).settings(
-  crossScalaVersions := Seq("2.10.6", "2.11.8"),
-  playVersion := "2.3"
-)
-
-lazy val `play-active_2.5` = `play-active`.copy(s"${`play-active`.id}_2_5").dependsOn(`play_2.5`).settings(
-  playVersion := "2.5"
-)
+lazy val `play_2.10_2.3` =  play("2.3.9")("2.10.6")
+lazy val `play_2.11_2.3` = play("2.3.9")("2.11.8")
+lazy val `play_2.11_2.5` = play("2.5.10")("2.11.8")
+lazy val `play-active_2.10_2.3` = `play-active`("2.3.9")("2.10.6")
+lazy val `play-active_2.11_2.3` = `play-active`("2.3.9")("2.11.8")
+lazy val `play-active_2.11_2.5` = `play-active`("2.5.10")("2.11.8")
 
 inScope(Global)(Seq(
-  credentials += Credentials("Sonatype Nexus Repository Manager", "oss.sonatype.org", sys.env.getOrElse("SONATYPE_USERNAME", ""), sys.env.getOrElse("SONATYPE_PASSWORD", "")),
+  credentials += Credentials(
+    "Sonatype Nexus Repository Manager",
+    "oss.sonatype.org",
+    sys.env.getOrElse("SONATYPE_USERNAME", ""),
+    sys.env.getOrElse("SONATYPE_PASSWORD", ""
+  )),
   developers += Developer("pauldraper", "Paul Draper", "paulddraper@gmail.com", url("https://github.com/pauldraper")),
   licenses += "Apache 2.0 License" -> url("https://www.apache.org/licenses/LICENSE-2.0"),
   organization := "com.lucidchart",
   organizationHomepage := Some(url("http://opentracing.io/")),
   organizationName := "OpenTracing",
-  pgpPassphrase := Some(Array.emptyCharArray),
-  pgpPublicRing := file(System.getProperty("user.home")) / ".pgp" / "pubring",
-  pgpSecretRing := file(System.getProperty("user.home")) / ".pgp" / "secring",
+  PgpKeys.pgpPassphrase := Some(Array.emptyCharArray),
   resolvers += Resolver.typesafeRepo("releases"),
   scalaVersion := "2.11.8",
   scmInfo := Some(ScmInfo(

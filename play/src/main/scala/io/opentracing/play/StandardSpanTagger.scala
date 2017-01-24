@@ -17,3 +17,5 @@ class StandardSpanTagger extends SpanTagger {
     Tags.PEER_PORT.set(span, request.host.split(":").lift(1).fold(if (request.secure) 443.toShort else 80.toShort)(_.toShort))
   }
 }
+
+object StandardSpanTagger extends StandardSpanTagger

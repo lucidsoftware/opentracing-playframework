@@ -23,7 +23,7 @@ class RemoteSpanTagger extends SpanTagger {
   }
 }
 
-object RemoteSpanTagger {
+object RemoteSpanTagger extends RemoteSpanTagger {
   val RemoteIp4Tag = "remote.ipv4"
   val RemoteIp6Tag = "remote.ipv6"
 }
