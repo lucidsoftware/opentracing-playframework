@@ -22,6 +22,7 @@ inScope(Global)(Seq(
     sys.env.getOrElse("SONATYPE_PASSWORD", ""
   )),
   developers += Developer("pauldraper", "Paul Draper", "paulddraper@gmail.com", url("https://github.com/pauldraper")),
+  homepage := Some(url("https://git.lucidchart.com/lucidsoftware/opentracing-playframework")),
   licenses += "Apache 2.0 License" -> url("https://www.apache.org/licenses/LICENSE-2.0"),
   organization := "com.lucidchart",
   organizationHomepage := Some(url("http://opentracing.io/")),
