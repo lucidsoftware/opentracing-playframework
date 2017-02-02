@@ -6,12 +6,12 @@ import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.mvc._
 import scala.util.control.NonFatal
 
-abstract class BaseTracingFilter(name: String, taggers: Traversable[SpanTagger]) extends EssentialFilter {
+abstract class BaseTracingFilter(taggers: Traversable[SpanTagger]) extends EssentialFilter {
 
   protected[this] def tracer: Tracer
 
   protected[this] def spanBuilder(request: RequestHeader) = {
-    val builder = tracer.buildSpan(Routes.controllerName(request).getOrElse(name))
+    val builder = tracer.buildSpan(Routes.endpointName(request).getOrElse(request.method))
     try {
       builder.asChildOf(tracer.extract(Format.Builtin.HTTP_HEADERS, new HeadersTextMap(request.headers)))
     } catch {
@@ -23,9 +23,8 @@ abstract class BaseTracingFilter(name: String, taggers: Traversable[SpanTagger])
     val span = spanBuilder(request).start()
     val result = next(request)
     result.map { result =>
-      val finish = (System.nanoTime / 1000).toInt
       taggers.foreach(_.tag(span, request, result))
-      span.finish(finish)
+      span.finish()
       result
     }
   }
