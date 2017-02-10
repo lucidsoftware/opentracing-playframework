@@ -1,7 +1,7 @@
 description := "Play Opentracing, using globaltracer and spanmanager"
 
 libraryDependencies ++= Seq(
-  "io.opentracing.contrib" % "opentracing-globaltracer" % "0.0.1",
+  "io.opentracing.contrib" % "opentracing-globaltracer" % "0.1.0",
   "io.opentracing.contrib" % "opentracing-spanmanager" % "0.0.1"
 )
 
