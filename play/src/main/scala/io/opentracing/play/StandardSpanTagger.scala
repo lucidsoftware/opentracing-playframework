@@ -15,7 +15,7 @@ class StandardSpanTagger(name: Option[String] = None) extends SpanTagger {
     Tags.HTTP_STATUS.set(span, result.header.status)
     Tags.HTTP_URL.set(span, s"${if (request.secure) "http" else "https"}://${request.host}${request.uri}")
     Tags.PEER_HOSTNAME.set(span, request.domain)
-    Tags.PEER_PORT.set(span, request.host.split(":").lift(1).fold(if (request.secure) 443.toShort else 80.toShort)(_.toShort))
+    //Tags.PEER_PORT.set(span, request.host.split(":").lift(1).fold(if (request.secure) 443.toShort else 80.toShort)(_.toShort))
     Tags.SPAN_KIND.set(span, Tags.SPAN_KIND_SERVER)
   }
 }
