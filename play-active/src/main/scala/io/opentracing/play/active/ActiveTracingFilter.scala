@@ -11,15 +11,16 @@ class ActiveTracingFilter(taggers: Traversable[SpanTagger]) extends BaseTracingF
   protected[this] def tracer = GlobalTracer.get
 
   override def apply(next: EssentialAction) = EssentialAction { request =>
-    val oldManagedSpan = DefaultSpanManager.getInstance.currentSpan()
     val span = spanBuilder(request).start()
     val managedSpan = DefaultSpanManager.getInstance.manage(span)
-    next(request).map { result =>
-      taggers.foreach(_.tag(span, request, result))
-      span.finish()
+    try {
+      next(request).map { result =>
+        taggers.foreach(_.tag(span, request, result))
+        span.finish()
+        result
+      }
+    } finally {
       managedSpan.release()
-      DefaultSpanManager.getInstance().manage(oldManagedSpan)
-      result
     }
   }
 }
