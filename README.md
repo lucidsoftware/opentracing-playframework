@@ -3,7 +3,9 @@
 [![Build Status](https://travis-ci.org/lucidsoftware/opentracing-playframework.svg?branch=master)](https://travis-ci.org/lucidsoftware/opentracing-playframework)
 ![Maven Version](https://img.shields.io/maven-central/v/com.lucidchart/opentracing-play_2.11.svg)
 
-## Install
+## Usage
+
+### Add dependency
 
 This project is cross-versioned against Play. The Play version appears as a suffix.
 
@@ -17,20 +19,32 @@ libraryDependencies += "com.lucidchart" % "opentracing-play-active" % "<version>
 libraryDependencies += "com.lucidchart" % "opentracing-play-active" % "<version>-2.5"
 ```
 
-## Example
+### Configure Akka
+
+This project [`ThreadContextSpan`](https://github.com/lucidsoftware/opentracing-thread-context) and
+[`GlobalTracer`](https://github.com/opentracing-contrib/java-globaltracer).
+
+To propagate the thread-local span, add [akka-thread-context](https://github.com/lucidsoftware/akka-thread-context) as
+a dependency and configure Akka to use `DispatchConfigurator`.
+
+```hocon
+akka.actor.default-dispatcher.type = com.lucidchart.akka.threadcontext.DispatchConfigurator
+```
+
+### Add filters
+
+Add `TracingFilter`, including the `SpanTagger`s that you want.
 
 ```scala
 import io.opentracing.play.active
 
 class Filters extends DefaultHttpFilters(
   new ActiveTracingFilter(
-    ContentTagger,      // tags content headers
-    HttpVersionTagger,  // tags HTTP version
-    RemoteSpanTagger,   // tags remote address
-    StandardSpanTagger, // tags standard OpenTracing tags
-    TagsSpanTagger      // tags Play request tags
+    ContentTagger,      // content headers
+    HttpVersionTagger,  // HTTP version
+    RemoteSpanTagger,   // remote address
+    StandardSpanTagger, // standard OpenTracing tags
+    TagsSpanTagger      // Play request tags
   )
 )
 ```
-
-The `ActiveTracingFilter` uses `SpanManager` and the global `Tracer`.
