@@ -22,6 +22,7 @@ abstract class TracingFilter(contextSpan: ContextSpan, taggers: Traversable[Span
     contextSpan.set(span).supply(toSupplier {
       next(request).map { result =>
         taggers.foreach(_.tag(span, request, result))
+        span.finish()
         result
       }
     })
