@@ -13,7 +13,7 @@ class StandardSpanTagger(name: Option[String] = None) extends SpanTagger {
     name.foreach(Tags.PEER_SERVICE.set(span, _))
     Tags.HTTP_METHOD.set(span, request.method)
     Tags.HTTP_STATUS.set(span, result.header.status)
-    Tags.HTTP_URL.set(span, s"${if (request.secure) "http" else "https"}://${request.host}${request.uri}")
+    Tags.HTTP_URL.set(span, request.uri)
     Tags.PEER_HOSTNAME.set(span, request.domain)
     //Tags.PEER_PORT.set(span, request.host.split(":").lift(1).fold(if (request.secure) 443.toShort else 80.toShort)(_.toShort))
   }
