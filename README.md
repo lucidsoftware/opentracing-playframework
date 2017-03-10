@@ -33,18 +33,18 @@ akka.actor.default-dispatcher.type = com.lucidchart.akka.threadcontext.DefaultDi
 
 ### Add filters
 
-Add `TracingFilter`, including the `SpanTagger`s that you want.
+Add `TracingFilter`, specifying the `SpanTagger`s that you want.
 
 ```scala
 import io.opentracing.play.active
 
 class Filters extends DefaultHttpFilters(
-  new ActiveTracingFilter(
-    ContentTagger,      // content headers
-    HttpVersionTagger,  // HTTP version
-    RemoteSpanTagger,   // remote address
-    StandardSpanTagger, // standard OpenTracing tags
-    TagsSpanTagger      // Play request tags
+  new DefaultTracingFilter(
+    new ContentTagger,               // content headers
+    new HttpVersionTagger,           // HTTP version
+    new RemoteSpanTagger,            // remote address
+    new StandardSpanTagger("myapp"), // standard OpenTracing tags
+    new TagsSpanTagger(_ => true)    // Play request tags
   )
 )
 ```
