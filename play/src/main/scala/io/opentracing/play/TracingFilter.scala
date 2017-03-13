@@ -15,7 +15,7 @@ abstract class TracingFilter(contextSpan: ContextSpan, taggers: Traversable[Span
   protected[this] def tracer: Tracer
 
   def apply(next: EssentialAction) = EssentialAction { request =>
-    val span = tracer.buildSpan(Routes.endpointName(request).getOrElse(request.method))
+    val span = tracer.buildSpan(Routes.endpointName(request).getOrElse(s"HTTP ${request.method}"))
       .asChildOf(tracer.extract(Format.Builtin.HTTP_HEADERS, new HeadersTextMap(request.headers)))
       .withTag(Tags.SPAN_KIND.getKey, Tags.SPAN_KIND_SERVER)
       .start()

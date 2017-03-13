@@ -1,20 +1,28 @@
 package io.opentracing.play
 
+import com.google.common.net.InetAddresses
 import io.opentracing.Span
 import io.opentracing.tag.Tags
+import java.net.{Inet4Address, Inet6Address}
+import java.nio.ByteBuffer
 import play.api.mvc.{RequestHeader, Result}
+import scala.util.Try
 
 /**
  * Applies standard tags
  * @see https://raw.githubusercontent.com/opentracing/specification/1.0/data_conventions.yaml
  */
-class StandardSpanTagger(name: Option[String] = None) extends SpanTagger {
+class StandardSpanTagger extends SpanTagger {
   def tag(span: Span, request: RequestHeader, result: Result) = {
-    name.foreach(Tags.PEER_SERVICE.set(span, _))
     Tags.HTTP_METHOD.set(span, request.method)
     Tags.HTTP_STATUS.set(span, result.header.status)
     Tags.HTTP_URL.set(span, request.uri)
-    Tags.PEER_HOSTNAME.set(span, request.domain)
-    //Tags.PEER_PORT.set(span, request.host.split(":").lift(1).fold(if (request.secure) 443.toShort else 80.toShort)(_.toShort))
+    request.headers.get("X-Forwarded-Port").flatMap(port => Try(port.toInt.toShort).toOption)
+      .foreach(Tags.PEER_PORT.set(span, _))
+    Try(InetAddresses.forString(request.remoteAddress)).foreach {
+      case ip: Inet4Address => Tags.PEER_HOST_IPV4.set(span, ByteBuffer.wrap(ip.getAddress).getInt)
+      case ip: Inet6Address => Tags.PEER_HOST_IPV6.set(span, ip.getHostAddress.takeWhile(_ != "%"))
+    }
+
   }
 }

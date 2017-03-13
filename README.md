@@ -42,8 +42,7 @@ class Filters extends DefaultHttpFilters(
   new DefaultTracingFilter(
     new ContentTagger,               // content headers
     new HttpVersionTagger,           // HTTP version
-    new RemoteSpanTagger,            // remote address
-    new StandardSpanTagger("myapp"), // standard OpenTracing tags
+    new StandardSpanTagger,          // standard OpenTracing tags
     new TagsSpanTagger(_ => true)    // Play request tags
   )
 )
