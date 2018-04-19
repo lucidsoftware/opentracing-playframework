@@ -9,10 +9,11 @@ after_success: |
   fi
 cache:
   directories:
-    - $HOME/.ivy2
-    - $HOME/.sbt
+  - "$HOME/.ivy2"
+  - "$HOME/.sbt"
 deploy:
-  api_key: $GITHUB_AUTH
+  api_key:
+    secure: V3O7rZUpyXuWxHUNyIl2+BKbvPPneh7ghyTbCRFfQSd4ovpVcDJarEtoBWxre5F24YX+ybCcjXACM+AAlhQYR6TjVTT5RtdRAEPJDchN3FdHXfh1z2SFgiavuSVleqULXAaBDGiSJEyUuZaQzycCM4J6H6++t4dZ38nvfovTenzx5bki2jTHrzaEddSBHLcBqf9AGbnccGUuzq5nok8leI5FkHEg99sOoEWhpxsYFyW04ngzskpE+6AxvwnCrsAeKAteywN0kVz2FQcOlDmF6ffh0qvJH4TeDs/77IbvTFvzwMe/umsPyfR8TiAVW73Z1aeBYUqe57P1XW+9EHZVFTLAjorwXWuudsAOywnfKiid7G25bDa+AxYBflYrkY1pUIWNoTScsAIxxvKNeCqV3UhVo3hutb1Rivlmt9traV08dMnZQKffH30k9/eW3OTY7a+Yj4ZxzvRPHBhj8TQJSRapeoGa9EME3dssOFB0eVF4k2ROoO17SNGM7hv8is/69yaTyn1oqvdsmbrvU+xSsUUkTbU8JB1Q+Rcy8SM+2sDQbkmJMWJp7+wfCaDZZlnUgb7psDRT0RtxlccmcrZlNBmOBG5+dRfglkG6yd+upBiqJBEC0aND8rrGxv+0+X2jZd3W4CP+Kzr4pquCjfK3g6cPd2LpuiFp9oN/LkHGK9M=
   file: '*/target/**/*.jar'
   file_glob: true
   on:
@@ -24,5 +25,5 @@ git:
 jdk: oraclejdk8
 language: scala
 script:
-  - '[ "$TRAVIS_PULL_REQUEST" != false ] || export SBT_OPTS=-Dbuild.version=${TRAVIS_TAG:-$TRAVIS_BRANCH-SNAPSHOT}'
-  - sbt package
+- '[ "$TRAVIS_PULL_REQUEST" != false ] || export SBT_OPTS=-Dbuild.version=${TRAVIS_TAG:-$TRAVIS_BRANCH-SNAPSHOT}'
+- sbt package
