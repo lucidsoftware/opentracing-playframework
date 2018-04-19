@@ -8,7 +8,7 @@ import java.util.function.Supplier
 import play.api.mvc._
 import scala.concurrent.ExecutionContext
 
-abstract class TracingFilter(contextSpan: ContextSpan, taggers: Traversable[SpanTagger])(implicit ec: ExecutionContext) extends EssentialFilter {
+abstract class TracingFilter(protected[this] val contextSpan: ContextSpan, taggers: Traversable[SpanTagger])(implicit ec: ExecutionContext) extends EssentialFilter {
 
   private[this] def toSupplier[A](a: => A) = new Supplier[A] { def get() = a }
 
