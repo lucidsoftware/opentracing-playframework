@@ -9,7 +9,7 @@ def `play-active` = Project("play-active", file("play-active"))
 
 lazy val `play_2.10_2.3` =  play("2.3.9")("2.10.6")
 lazy val `play_2.11_2.3` = play("2.3.9")("2.11.8")
-lazy val `play_2.11_2.5` = play("2.5.10")("2.11.8")
+lazy val `play_2.11_2.5` = play("2.5.12")("2.11.12")
 
 inScope(Global)(Seq(
   credentials += Credentials(
