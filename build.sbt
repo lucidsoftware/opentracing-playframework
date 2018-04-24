@@ -7,8 +7,6 @@ def play = Project("play", file("play")).cross.cross(playAxis)
 def `play-active` = Project("play-active", file("play-active"))
   .cross.cross(playAxis).dependsOn(CrossableProject.toDependency(play))
 
-lazy val `play_2.10_2.3` =  play("2.3.9")("2.10.6")
-lazy val `play_2.11_2.3` = play("2.3.9")("2.11.8")
 lazy val `play_2.11_2.5` = play("2.5.12")("2.11.12")
 
 inScope(Global)(Seq(
@@ -26,7 +24,7 @@ inScope(Global)(Seq(
   organizationName := "OpenTracing",
   PgpKeys.pgpPassphrase := Some(Array.emptyCharArray),
   resolvers += Resolver.typesafeRepo("releases"),
-  scalaVersion := "2.11.8",
+  scalaVersion := "2.11.12",
   scmInfo := Some(ScmInfo(
     url("https://github.com/lucidsoftware/opentracing-playframework"),
     "scm:git:git@github.com:lucidsoftware/opentracing-playframework.git"
