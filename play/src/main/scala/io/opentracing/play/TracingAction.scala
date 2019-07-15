@@ -1,12 +1,15 @@
 package io.opentracing.play
 
-import io.opentracing.{Tracer, Span}
+import io.opentracing.{Span, Tracer}
 import io.opentracing.contrib.global.GlobalTracer
 import io.opentracing.propagation.Format
 import io.opentracing.tag.Tags
 import io.opentracing.threadcontext.ContextSpan
 import java.util.concurrent.Callable
+
+import akka.stream.ActorMaterializer
 import play.api.mvc._
+
 import scala.concurrent.{ExecutionContext, Future}
 
 private object RequestSpan {
@@ -29,7 +32,8 @@ class TracingRequest[+A](val span: Span, request: Request[A]) extends WrappedReq
  * object TracingAction extends TracingActionBuilder(ContextSpan.DEFAULT, Nil)
  * }}}
  */
-class TracingActionBuilder(protected[this] val tracer: Tracer, protected[this] val contextSpan: ContextSpan, taggers: Traversable[SpanTagger])(implicit ec: ExecutionContext) extends ActionBuilder[TracingRequest] {
+class TracingActionBuilder(protected[this] val tracer: Tracer, protected[this] val contextSpan: ContextSpan, taggers: Traversable[SpanTagger])
+                          (implicit ec: ExecutionContext, mat: ActorMaterializer) extends ActionBuilder[TracingRequest, AnyContent] {
   /**
    * Finish tagging the span and finish it. A subclass may wish to
    */
@@ -46,9 +50,14 @@ class TracingActionBuilder(protected[this] val tracer: Tracer, protected[this] v
       def call() = block(tracingRequest).map(finishSpan(tracingRequest, _))
     })
   }
+
+  override protected def executionContext: ExecutionContext = ec
+
+  override def parser: BodyParser[AnyContent] = new BodyParsers.Default
 }
 
 /**
  * Like TracingRequest but uses ContextSpan.DEFAULT and GlobalTracer for the context and tracer.
  */
-class DefaultTracingActionBuilder(taggers: Traversable[SpanTagger])(implicit ec: ExecutionContext) extends TracingActionBuilder(GlobalTracer.get, ContextSpan.DEFAULT, taggers)
+class DefaultTracingActionBuilder(taggers: Traversable[SpanTagger])
+                                 (implicit ec: ExecutionContext, mat: ActorMaterializer) extends TracingActionBuilder(GlobalTracer.get, ContextSpan.DEFAULT, taggers)

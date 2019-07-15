@@ -5,8 +5,8 @@ import play.api.routing.Router
 
 object Routes {
 
-  def endpointName(request: RequestHeader) = request.tags.get(Router.Tags.RouteController).map { controller =>
-    request.tags.get(Router.Tags.RouteActionMethod).fold(controller) { method => s"$controller.$method" }
+  def endpointName(request: RequestHeader): Option[String] = request.attrs.get(Router.Attrs.HandlerDef).map { handler =>
+    s"${handler.controller}.${handler.method}"
   }
 
 }
