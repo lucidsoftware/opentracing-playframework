@@ -7,7 +7,15 @@ def play = Project("play", file("play")).cross.cross(playAxis)
 def `play-active` = Project("play-active", file("play-active"))
   .cross.cross(playAxis).dependsOn(CrossableProject.toDependency(play))
 
+lazy val `play_2.13_2.7` = play("2.7.3")("2.13.0")
+
+lazy val `play_2.12_2.7` = play("2.7.3")("2.12.8")
+
 lazy val `play_2.12_2.6` = play("2.6.23")("2.12.8")
+
+lazy val `play_2.11_2.7` = play("2.7.3")("2.11.12")
+
+lazy val `play_2.11_2.6` = play("2.6.23")("2.11.12")
 
 inScope(Global)(Seq(
   credentials += Credentials(
@@ -17,7 +25,7 @@ inScope(Global)(Seq(
     sys.env.getOrElse("SONATYPE_PASSWORD", ""
   )),
   developers += Developer("pauldraper", "Paul Draper", "paulddraper@gmail.com", url("https://github.com/pauldraper")),
-  homepage := Some(url("https://git.lucidchart.com/lucidsoftware/opentracing-playframework")),
+  homepage := Some(url("https://github.com/lucidsoftware/opentracing-playframework")),
   licenses += "Apache 2.0 License" -> url("https://www.apache.org/licenses/LICENSE-2.0"),
   organization := "com.lucidchart",
   organizationHomepage := Some(url("http://opentracing.io/")),
