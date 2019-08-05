@@ -9,6 +9,8 @@ def `play-active` = Project("play-active", file("play-active"))
 
 lazy val `play_2.12_2.6` = play("2.6.23")("2.12.8")
 
+lazy val `play_2.11_2.6` = play("2.6.23")("2.11.12")
+
 inScope(Global)(Seq(
   credentials += Credentials(
     "Sonatype Nexus Repository Manager",
