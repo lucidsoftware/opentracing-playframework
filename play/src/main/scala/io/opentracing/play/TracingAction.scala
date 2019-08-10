@@ -36,7 +36,7 @@ class TracingActionBuilder(
   protected[this] val tracer: Tracer,
   protected[this] val contextSpan: ContextSpan,
   taggers: Traversable[SpanTagger]
-)(implicit ec: ExecutionContext, mat: ActorMaterializer)
+)(val parser: BodyParser[AnyContent])(implicit ec: ExecutionContext)
     extends ActionBuilder[TracingRequest, AnyContent] {
 
   /**
@@ -69,8 +69,6 @@ class TracingActionBuilder(
   }
 
   override protected def executionContext: ExecutionContext = ec
-
-  override def parser: BodyParser[AnyContent] = new BodyParsers.Default
 }
 
 /**
@@ -79,4 +77,4 @@ class TracingActionBuilder(
 class DefaultTracingActionBuilder(taggers: Traversable[SpanTagger])(
   implicit ec: ExecutionContext,
   mat: ActorMaterializer
-) extends TracingActionBuilder(GlobalTracer.get, ContextSpan.DEFAULT, taggers)
+) extends TracingActionBuilder(GlobalTracer.get, ContextSpan.DEFAULT, taggers)(new BodyParsers.Default)
