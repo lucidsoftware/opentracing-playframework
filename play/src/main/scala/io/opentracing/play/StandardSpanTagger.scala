@@ -19,11 +19,15 @@ class StandardSpanTagger extends SpanTagger {
       Tags.HTTP_STATUS.set(span, result.header.status)
     }
     Tags.HTTP_URL.set(span, request.uri)
-    request.headers.get("X-Forwarded-Port").flatMap(port => Try(port.toInt.toShort).toOption)
+    request.headers
+      .get("X-Forwarded-Port")
+      .flatMap(port => Try(port.toInt.toShort).toOption)
       .foreach(Tags.PEER_PORT.set(span, _))
     Try(InetAddresses.forString(request.remoteAddress)).foreach {
-      case ip: Inet4Address => Tags.PEER_HOST_IPV4.set(span, ByteBuffer.wrap(ip.getAddress).getInt)
-      case ip: Inet6Address => Tags.PEER_HOST_IPV6.set(span, ip.getHostAddress.takeWhile(_ != '%'))
+      case ip: Inet4Address =>
+        Tags.PEER_HOST_IPV4.set(span, ByteBuffer.wrap(ip.getAddress).getInt)
+      case ip: Inet6Address =>
+        Tags.PEER_HOST_IPV6.set(span, ip.getHostAddress.takeWhile(_ != '%'))
     }
 
   }
