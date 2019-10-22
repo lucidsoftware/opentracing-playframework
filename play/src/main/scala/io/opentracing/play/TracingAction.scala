@@ -1,7 +1,7 @@
 package io.opentracing.play
 
 import io.opentracing.{Span, Tracer}
-import io.opentracing.contrib.global.GlobalTracer
+import io.opentracing.util.GlobalTracer
 import io.opentracing.propagation.Format
 import io.opentracing.tag.Tags
 import io.opentracing.threadcontext.ContextSpan

@@ -1,6 +1,6 @@
 package io.opentracing.play
 
-import io.opentracing.contrib.global.GlobalTracer
+import io.opentracing.util.GlobalTracer
 import io.opentracing.threadcontext.ContextSpan
 import scala.concurrent.ExecutionContext
 
