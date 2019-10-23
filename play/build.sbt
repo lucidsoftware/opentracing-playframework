@@ -9,3 +9,4 @@ libraryDependencies ++= Seq(
 )
 
 moduleName := "opentracing-play"
+publishTo := sonatypePublishTo.value

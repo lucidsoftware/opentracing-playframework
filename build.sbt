@@ -40,3 +40,5 @@ inScope(Global)(Seq(
   startYear := Some(2017),
   version := sys.props.getOrElse("build.version", "0-SNAPSHOT")
 ))
+
+skip in publish := true

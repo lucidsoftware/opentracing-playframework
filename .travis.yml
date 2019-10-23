@@ -4,7 +4,7 @@ after_success: |
     if [ -z "$TRAVIS_TAG" ]; then
         sbt publishSigned
     else
-        sbt "sonatypeOpen \"opentracing-playframework $TRAVIS_TAG\"" publishSigned sonatypeReleaseAll
+        sbt publishSigned sonatypeReleaseAll
     fi
   fi
 cache:

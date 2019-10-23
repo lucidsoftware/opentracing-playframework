@@ -1,4 +1,4 @@
-addSbtPlugin("com.jsuereth" % "sbt-pgp" % "1.0.0")
+addSbtPlugin("com.jsuereth" % "sbt-pgp" % "2.0.0")
 
 addSbtPlugin("com.lucidchart" % "sbt-cross" % "3.2")
 
