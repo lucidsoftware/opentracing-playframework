@@ -4,7 +4,7 @@ after_success: |
     if [ -z "$TRAVIS_TAG" ]; then
         sbt publishSigned
     else
-        sbt publishSigned sonatypeReleaseAll
+        sbt "sonatypeOpen \"opentracing-playframework $TRAVIS_TAG\"" publishSigned sonatypeReleaseAll
     fi
   fi
 cache:
@@ -19,6 +19,7 @@ deploy:
   on:
     tags: true
   provider: releases
+  overwrite: true
   skip_cleanup: true
 git:
   depth: 1
