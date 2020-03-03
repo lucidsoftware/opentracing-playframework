@@ -28,7 +28,7 @@ To propagate the thread-local span, add [akka-thread-context](https://github.com
 a dependency and configure Akka to use `DispatchConfigurator`.
 
 ```hocon
-akka.actor.default-dispatcher.type = com.lucidchart.akka.threadcontext.DefaultDispatchConfigurator
+akka.actor.default-dispatcher.type = com.lucidchart.akka.threadcontext.DefaultDispatcherConfigurator
 ```
 
 ### Add filters
