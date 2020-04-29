@@ -1,6 +1,6 @@
 # OpenTracing for [Play Framework](https://www.playframework.com/)
 
-[![Build Status](https://travis-ci.org/lucidsoftware/opentracing-playframework.svg?branch=master)](https://travis-ci.org/lucidsoftware/opentracing-playframework)
+[![Build Status](https://travis-ci.com/lucidsoftware/opentracing-playframework.svg?branch=master)](https://travis-ci.com/lucidsoftware/opentracing-playframework)
 ![Maven Version](https://img.shields.io/maven-central/v/com.lucidchart/opentracing-play_2.11.svg)
 
 ## Usage
