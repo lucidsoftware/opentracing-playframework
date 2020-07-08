@@ -26,7 +26,7 @@ libraryDependencies += "com.lucidchart" % "opentracing-play" % "<version>-2.6"
 
 ```scala
 // Play 2.7.x
-libraryDependencies += "com.lucidchart" % "opentracing-play" % "<version>-2.6"
+libraryDependencies += "com.lucidchart" % "opentracing-play" % "<version>-2.7"
 ```
 
 ### Configure Akka
