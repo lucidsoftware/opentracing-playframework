@@ -19,6 +19,16 @@ libraryDependencies += "com.lucidchart" % "opentracing-play-active" % "<version>
 libraryDependencies += "com.lucidchart" % "opentracing-play-active" % "<version>-2.5"
 ```
 
+```scala
+// Play 2.6.x
+libraryDependencies += "com.lucidchart" % "opentracing-play" % "<version>-2.6"
+```
+
+```scala
+// Play 2.7.x
+libraryDependencies += "com.lucidchart" % "opentracing-play" % "<version>-2.6"
+```
+
 ### Configure Akka
 
 This project [`ThreadContextSpan`](https://github.com/lucidsoftware/opentracing-thread-context) and
