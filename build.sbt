@@ -7,15 +7,19 @@ def play = Project("play", file("play")).cross.cross(playAxis)
 def `play-active` = Project("play-active", file("play-active"))
   .cross.cross(playAxis).dependsOn(CrossableProject.toDependency(play))
 
-lazy val `play_2.13_2.7` = play("2.7.3")("2.13.0")
+lazy val `play_2.13_2.8` = play("2.8.2")("2.13.2")
 
-lazy val `play_2.12_2.7` = play("2.7.3")("2.12.8")
+lazy val `play_2.13_2.7` = play("2.7.5")("2.13.2")
 
-lazy val `play_2.12_2.6` = play("2.6.23")("2.12.8")
+lazy val `play_2.12_2.8` = play("2.7.5")("2.12.12")
 
-lazy val `play_2.11_2.7` = play("2.7.3")("2.11.12")
+lazy val `play_2.12_2.7` = play("2.7.5")("2.12.12")
 
-lazy val `play_2.11_2.6` = play("2.6.23")("2.11.12")
+lazy val `play_2.12_2.6` = play("2.6.25")("2.12.12")
+
+lazy val `play_2.11_2.7` = play("2.7.5")("2.11.12")
+
+lazy val `play_2.11_2.6` = play("2.6.25")("2.11.12")
 
 inScope(Global)(Seq(
   credentials += Credentials(
