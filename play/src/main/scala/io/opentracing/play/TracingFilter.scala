@@ -6,7 +6,7 @@ import io.opentracing.tag.Tags
 import io.opentracing.threadcontext.ContextSpan
 import java.util.function.Supplier
 import play.api.mvc._
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @deprecated("Filters don't work well for setting thread local storage, use TracingAction instead", "0.12")
 abstract class TracingFilter(protected[this] val contextSpan: ContextSpan, taggers: Traversable[SpanTagger])(implicit ec: ExecutionContext) extends EssentialFilter {
@@ -23,9 +23,14 @@ abstract class TracingFilter(protected[this] val contextSpan: ContextSpan, tagge
       .start()
     contextSpan.set(span).supply(toSupplier {
       next(request).map { result =>
-        taggers.foreach(_.tag(span, request, result))
+        taggers.foreach(_.tag(span, request, Some(result)))
         span.finish()
         result
+      }.recoverWith { case e =>
+        Tags.ERROR.set(span, true)
+        taggers.foreach(_.tag(span, request, None))
+        span.finish()
+        Future.failed(e)
       }
     })
   }

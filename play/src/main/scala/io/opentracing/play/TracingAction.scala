@@ -37,17 +37,23 @@ class TracingActionBuilder(protected[this] val tracer: Tracer, protected[this] v
   /**
    * Finish tagging the span and finish it. A subclass may wish to
    */
-  protected def finishSpan[A](request: TracingRequest[A], result: Result): Result = {
+  protected def finishSpan[A](request: TracingRequest[A], result: Option[Result]) = {
     taggers.foreach(_.tag(request.span, request, result))
     request.span.finish()
-    result
   }
 
   final def invokeBlock[A](request: Request[A], block: TracingRequest[A] => Future[Result]): Future[Result] = {
     val span = RequestSpan(tracer, request)
     val tracingRequest = new TracingRequest(span, request)
     contextSpan.set(span).call(new Callable[Future[Result]] {
-      def call() = block(tracingRequest).map(finishSpan(tracingRequest, _))
+      def call() = block(tracingRequest).map { result => 
+        finishSpan(tracingRequest, Some(result))
+        result
+      }.recoverWith { case e =>
+        Tags.ERROR.set(tracingRequest.span, true)
+        finishSpan(tracingRequest, None)
+        Future.failed(e)
+      }
     })
   }
 

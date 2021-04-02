@@ -15,7 +15,7 @@ import play.api.mvc.{RequestHeader, Result}
  */
 class RequestAttributesSpanTagger(attributeKeys: Set[TypedKey[String]]) extends SpanTagger {
 
-  def tag(span: Span, request: RequestHeader, result: Result) = {
+  def tag(span: Span, request: RequestHeader, result: Option[Result]) = {
     attributeKeys.foreach { key =>
       key.displayName.foreach { name =>
         request.attrs.get(key).foreach(value => span.setTag(s"play.$name", value))

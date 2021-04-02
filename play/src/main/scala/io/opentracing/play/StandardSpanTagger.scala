@@ -13,9 +13,11 @@ import scala.util.Try
  * @see https://raw.githubusercontent.com/opentracing/specification/1.0/data_conventions.yaml
  */
 class StandardSpanTagger extends SpanTagger {
-  def tag(span: Span, request: RequestHeader, result: Result) = {
+  def tag(span: Span, request: RequestHeader, result: Option[Result]) = {
     Tags.HTTP_METHOD.set(span, request.method)
-    Tags.HTTP_STATUS.set(span, result.header.status)
+    result.foreach { result =>
+      Tags.HTTP_STATUS.set(span, result.header.status)
+    }
     Tags.HTTP_URL.set(span, request.uri)
     request.headers.get("X-Forwarded-Port").flatMap(port => Try(port.toInt.toShort).toOption)
       .foreach(Tags.PEER_PORT.set(span, _))
