@@ -3,7 +3,7 @@ set -e
 
 echo "$PGP_SECRET" | base64 --decode | gpg --import
 if [[ $GITHUB_REF == refs/tags/* ]]; then
-  command="; publishSigned; sonatypeReleaseAll"
+  command="; publishSigned; sonatypeOpen; sonatypeReleaseAll"
 else
   command="publishSigned"
 fi
