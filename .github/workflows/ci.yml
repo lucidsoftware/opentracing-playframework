@@ -27,7 +27,7 @@ jobs:
             ~/.sbt
           key: ${{ runner.os }}-sbt-${{ hashFiles('**/build.sbt') }}
       - name: Build
-        run: sbt package
+        run: sbt "package;packageDoc;packageSrc"
       - uses: actions/upload-artifact@v2
         with:
           name: jars
