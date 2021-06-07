@@ -63,13 +63,11 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: jars
-      - name: Display structure of downloaded files
-        run: ls -R
       - name: Upload assets
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -x
           tag="${GITHUB_REF#refs/tags/}"
-          args=$(printf -- "-a %q " play/target/*/*/*.jar)
+          args=$(printf -- "-a %q " play*/scala*/*.jar)
           hub release create $args -m "Release $tag" $tag
