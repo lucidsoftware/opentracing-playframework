@@ -59,6 +59,8 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: jars
+      - name: Display structure of downloaded files
+        run: ls -R
       - name: Upload assets
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
