@@ -16,6 +16,10 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/setup-java@v2
+        with:
+          java-version: '8'
+          distribution: 'adopt'
       - uses: actions/cache@v2
         with:
           path: |
@@ -23,7 +27,7 @@ jobs:
             ~/.sbt
           key: ${{ runner.os }}-sbt-${{ hashFiles('**/build.sbt') }}
       - name: Build
-        run: sbt package
+        run: sbt "package;packageDoc;packageSrc"
       - uses: actions/upload-artifact@v2
         with:
           name: jars
@@ -59,13 +63,11 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: jars
-      - name: Display structure of downloaded files
-        run: ls -R
       - name: Upload assets
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -x
           tag="${GITHUB_REF#refs/tags/}"
-          args=$(printf -- "-a %q " play/target/*/*/*.jar)
+          args=$(printf -- "-a %q " play*/scala*/*.jar)
           hub release create $args -m "Release $tag" $tag
