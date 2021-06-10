@@ -5,12 +5,11 @@ import play.api.mvc.{RequestHeader, Result}
 class ContentTagger extends SpanTagger {
   import ContentTagger._
 
-  def tag(span: Span, request: RequestHeader, result: Option[Result]) = {
+  def tag(span: Span, request: RequestHeader, result: Option[Result]) =
     result.foreach { result =>
       result.body.contentLength.foreach(span.setTag(contentLengthTag, _))
       result.body.contentType.foreach(span.setTag(contentTypeTag, _))
     }
-  }
 }
 
 object ContentTagger extends ContentTagger {

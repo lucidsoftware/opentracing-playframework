@@ -12,3 +12,4 @@ moduleName := "opentracing-play"
 publishTo := sonatypePublishToBundle.value
 // This is needed because the play axis changes the version
 sonatypeBundleDirectory := (ThisBuild / baseDirectory).value / "target" / "sonatype-staging" / (Global / version).value
+scalafmtOnCompile := true
