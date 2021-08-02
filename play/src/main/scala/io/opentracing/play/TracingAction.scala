@@ -13,12 +13,12 @@ import play.api.mvc._
 import scala.concurrent.{ExecutionContext, Future}
 
 private object RequestSpan {
-  def apply(tracer: Tracer, request: RequestHeader): Span = {
-    tracer.buildSpan(Routes.endpointName(request).getOrElse(s"HTTP ${request.method}"))
+  def apply(tracer: Tracer, request: RequestHeader): Span =
+    tracer
+      .buildSpan(Routes.endpointName(request).getOrElse(s"HTTP ${request.method}"))
       .asChildOf(tracer.extract(Format.Builtin.HTTP_HEADERS, new HeadersTextMap(request.headers)))
       .withTag(Tags.SPAN_KIND.getKey, Tags.SPAN_KIND_SERVER)
       .start()
-  }
 }
 class TracingRequest[+A](val span: Span, request: Request[A]) extends WrappedRequest(request)
 
@@ -32,8 +32,13 @@ class TracingRequest[+A](val span: Span, request: Request[A]) extends WrappedReq
  * object TracingAction extends TracingActionBuilder(ContextSpan.DEFAULT, Nil)
  * }}}
  */
-class TracingActionBuilder(protected[this] val tracer: Tracer, protected[this] val contextSpan: ContextSpan, taggers: Traversable[SpanTagger])
-                          (implicit ec: ExecutionContext, mat: ActorMaterializer) extends ActionBuilder[TracingRequest, AnyContent] {
+class TracingActionBuilder(
+  protected[this] val tracer: Tracer,
+  protected[this] val contextSpan: ContextSpan,
+  taggers: Traversable[SpanTagger]
+)(val parser: BodyParser[AnyContent])(implicit ec: ExecutionContext)
+    extends ActionBuilder[TracingRequest, AnyContent] {
+
   /**
    * Finish tagging the span and finish it. A subclass may wish to
    */
@@ -45,25 +50,31 @@ class TracingActionBuilder(protected[this] val tracer: Tracer, protected[this] v
   final def invokeBlock[A](request: Request[A], block: TracingRequest[A] => Future[Result]): Future[Result] = {
     val span = RequestSpan(tracer, request)
     val tracingRequest = new TracingRequest(span, request)
-    contextSpan.set(span).call(new Callable[Future[Result]] {
-      def call() = block(tracingRequest).map { result => 
-        finishSpan(tracingRequest, Some(result))
-        result
-      }.recoverWith { case e =>
-        Tags.ERROR.set(tracingRequest.span, true)
-        finishSpan(tracingRequest, None)
-        Future.failed(e)
-      }
-    })
+    contextSpan
+      .set(span)
+      .call(new Callable[Future[Result]] {
+        def call() =
+          block(tracingRequest)
+            .map { result =>
+              finishSpan(tracingRequest, Some(result))
+              result
+            }
+            .recoverWith {
+              case e =>
+                Tags.ERROR.set(tracingRequest.span, true)
+                finishSpan(tracingRequest, None)
+                Future.failed(e)
+            }
+      })
   }
 
   override protected def executionContext: ExecutionContext = ec
-
-  override def parser: BodyParser[AnyContent] = new BodyParsers.Default
 }
 
 /**
  * Like TracingRequest but uses ContextSpan.DEFAULT and GlobalTracer for the context and tracer.
  */
-class DefaultTracingActionBuilder(taggers: Traversable[SpanTagger])
-                                 (implicit ec: ExecutionContext, mat: ActorMaterializer) extends TracingActionBuilder(GlobalTracer.get, ContextSpan.DEFAULT, taggers)
+class DefaultTracingActionBuilder(taggers: Traversable[SpanTagger])(
+  implicit ec: ExecutionContext,
+  mat: ActorMaterializer
+) extends TracingActionBuilder(GlobalTracer.get, ContextSpan.DEFAULT, taggers)(new BodyParsers.Default)

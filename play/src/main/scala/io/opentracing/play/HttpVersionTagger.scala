@@ -5,9 +5,8 @@ import play.api.mvc.{RequestHeader, Result}
 class HttpVersionTagger extends SpanTagger {
   import HttpVersionTagger._
 
-  def tag(span: Span, request: RequestHeader, result: Option[Result]) = {
+  def tag(span: Span, request: RequestHeader, result: Option[Result]) =
     span.setTag(HttpVersionTag, request.version)
-  }
 }
 
 object HttpVersionTagger extends HttpVersionTagger {
