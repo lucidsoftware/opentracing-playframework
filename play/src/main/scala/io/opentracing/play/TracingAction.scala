@@ -36,7 +36,7 @@ class TracingRequest[+A](val span: Span, request: Request[A]) extends WrappedReq
 class TracingActionBuilder(
   protected[this] val tracer: Tracer,
   protected[this] val contextSpan: ContextSpan,
-  taggers: Traversable[SpanTagger]
+  taggers: Iterable[SpanTagger]
 )(val parser: BodyParser[AnyContent])(implicit ec: ExecutionContext)
     extends ActionBuilder[TracingRequest, AnyContent] {
 
@@ -86,7 +86,7 @@ class TracingActionBuilder(
 /**
  * Like TracingRequest but uses ContextSpan.DEFAULT and GlobalTracer for the context and tracer.
  */
-class DefaultTracingActionBuilder(taggers: Traversable[SpanTagger])(
+class DefaultTracingActionBuilder(taggers: Iterable[SpanTagger])(
   implicit ec: ExecutionContext,
   mat: Materializer
 ) extends TracingActionBuilder(GlobalTracer.get, ContextSpan.DEFAULT, taggers)(new BodyParsers.Default)

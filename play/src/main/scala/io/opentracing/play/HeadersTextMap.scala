@@ -3,7 +3,7 @@ package io.opentracing.play
 import com.google.common.collect.Maps
 import io.opentracing.propagation.TextMap
 import play.api.mvc.Headers
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 class HeadersTextMap(headers: Headers) extends TextMap {
   def iterator =
