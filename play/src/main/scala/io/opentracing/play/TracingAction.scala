@@ -7,7 +7,7 @@ import io.opentracing.tag.Tags
 import io.opentracing.threadcontext.ContextSpan
 import java.util.concurrent.Callable
 
-import akka.stream.ActorMaterializer
+import akka.stream.Materializer
 import play.api.mvc._
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -88,5 +88,5 @@ class TracingActionBuilder(
  */
 class DefaultTracingActionBuilder(taggers: Traversable[SpanTagger])(
   implicit ec: ExecutionContext,
-  mat: ActorMaterializer
+  mat: Materializer
 ) extends TracingActionBuilder(GlobalTracer.get, ContextSpan.DEFAULT, taggers)(new BodyParsers.Default)
