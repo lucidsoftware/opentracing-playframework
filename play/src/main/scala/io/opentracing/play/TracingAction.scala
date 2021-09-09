@@ -11,6 +11,7 @@ import akka.stream.ActorMaterializer
 import play.api.mvc._
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success, Try}
 
 private object RequestSpan {
   def apply(tracer: Tracer, request: RequestHeader): Span =
@@ -53,18 +54,29 @@ class TracingActionBuilder(
     contextSpan
       .set(span)
       .call(new Callable[Future[Result]] {
+
+        private def failureHandler(exception: Throwable): Future[Result] = {
+          Tags.ERROR.set(tracingRequest.span, true)
+          finishSpan(tracingRequest, None)
+          Future.failed(exception)
+        }
+
         def call() =
-          block(tracingRequest)
-            .map { result =>
-              finishSpan(tracingRequest, Some(result))
-              result
-            }
-            .recoverWith {
-              case e =>
-                Tags.ERROR.set(tracingRequest.span, true)
-                finishSpan(tracingRequest, None)
-                Future.failed(e)
-            }
+          Try(block(tracingRequest)) match {
+            case Failure(exception) =>
+              failureHandler(exception)
+            case Success(resultFuture) =>
+              resultFuture
+                .map { result =>
+                  finishSpan(tracingRequest, Some(result))
+                  result
+                }
+                .recoverWith {
+                  case exception =>
+                    failureHandler(exception)
+                }
+          }
+
       })
   }
 
