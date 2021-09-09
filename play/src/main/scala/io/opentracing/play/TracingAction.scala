@@ -7,10 +7,11 @@ import io.opentracing.tag.Tags
 import io.opentracing.threadcontext.ContextSpan
 import java.util.concurrent.Callable
 
-import akka.stream.ActorMaterializer
+import akka.stream.Materializer
 import play.api.mvc._
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success, Try}
 
 private object RequestSpan {
   def apply(tracer: Tracer, request: RequestHeader): Span =
@@ -35,7 +36,7 @@ class TracingRequest[+A](val span: Span, request: Request[A]) extends WrappedReq
 class TracingActionBuilder(
   protected[this] val tracer: Tracer,
   protected[this] val contextSpan: ContextSpan,
-  taggers: Traversable[SpanTagger]
+  taggers: Iterable[SpanTagger]
 )(val parser: BodyParser[AnyContent])(implicit ec: ExecutionContext)
     extends ActionBuilder[TracingRequest, AnyContent] {
 
@@ -53,18 +54,29 @@ class TracingActionBuilder(
     contextSpan
       .set(span)
       .call(new Callable[Future[Result]] {
+
+        private def failureHandler(exception: Throwable): Future[Result] = {
+          Tags.ERROR.set(tracingRequest.span, true)
+          finishSpan(tracingRequest, None)
+          Future.failed(exception)
+        }
+
         def call() =
-          block(tracingRequest)
-            .map { result =>
-              finishSpan(tracingRequest, Some(result))
-              result
-            }
-            .recoverWith {
-              case e =>
-                Tags.ERROR.set(tracingRequest.span, true)
-                finishSpan(tracingRequest, None)
-                Future.failed(e)
-            }
+          Try(block(tracingRequest)) match {
+            case Failure(exception) =>
+              failureHandler(exception)
+            case Success(resultFuture) =>
+              resultFuture
+                .map { result =>
+                  finishSpan(tracingRequest, Some(result))
+                  result
+                }
+                .recoverWith {
+                  case exception =>
+                    failureHandler(exception)
+                }
+          }
+
       })
   }
 
@@ -74,7 +86,7 @@ class TracingActionBuilder(
 /**
  * Like TracingRequest but uses ContextSpan.DEFAULT and GlobalTracer for the context and tracer.
  */
-class DefaultTracingActionBuilder(taggers: Traversable[SpanTagger])(
+class DefaultTracingActionBuilder(taggers: Iterable[SpanTagger])(
   implicit ec: ExecutionContext,
-  mat: ActorMaterializer
+  mat: Materializer
 ) extends TracingActionBuilder(GlobalTracer.get, ContextSpan.DEFAULT, taggers)(new BodyParsers.Default)
